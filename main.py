@@ -240,6 +240,7 @@ def getData(file):
         RespectData.append([round(elem, 2) for elem in dataframe.iloc[string+10]])
         EfficiencyData.append([round(elem, 4) for elem in dataframe.iloc[string+15]])
         PricesData.append([round(elem, 0) for elem in dataframe.iloc[string + 20]])
+
     TankData = np.array(TankData)
     ConsumptionData = np.array(ConsumptionData)
     RespectData = np.array(RespectData)
