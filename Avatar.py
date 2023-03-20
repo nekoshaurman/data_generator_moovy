@@ -26,6 +26,8 @@ class TestAvatar:
         self.fame = None
         self.mastery = None
 
+        self.talents = None
+
     def getTypeDigit(self):
         return self.type.value
 
@@ -41,7 +43,7 @@ def getAvatarData(file):
 
     # Get characters characteristics Versality, Fame, Mastery, Range
     BasicData = [round(elem, 1) for elem in dataframe.iloc[26, 1:5]]
-    BasicData.pop()
+    # BasicData.pop()
     DriverData = [round(elem, 1) for elem in dataframe.iloc[27, 1:5]]
     TechnicianData = [round(elem, 1) for elem in dataframe.iloc[28, 1:5]]
     EcologistData = [round(elem, 1) for elem in dataframe.iloc[29, 1:5]]
@@ -60,7 +62,17 @@ def getAvatarData(file):
     return Data, Talents
 
 
-def generateTalents(avatar: TestAvatar, talentsData):
+def upByLevel(avatar: TestAvatar, avatarData):
+    ups = avatar.level
+    for up in range(ups):
+        avatar.versality_real = avatar.versality_real * avatarData[0][3]
+        avatar.fame_real = avatar.fame_real * avatarData[0][3]
+        avatar.mastery_real = avatar.mastery_real * avatarData[0][3]
+    return avatar
+
+
+def upByTalents(avatar: TestAvatar, talentsData):
+    save_talents = []
     talents = {
         'Versality': 0,
         'Mastery': 0,
@@ -104,7 +116,12 @@ def generateTalents(avatar: TestAvatar, talentsData):
                     avatar.fame = avatar.fame + avatar.fame * talentsData[2][x]
                 if level == 3:
                     avatar.fame = avatar.fame + avatar.fame * talentsData[2][3]
-    return avatar, talents
+
+    for talent in talents.keys():
+        if talents[talent] > 0:
+            save_talents.append(talent + str(talents[talent]))
+
+    return avatar, save_talents
 
 
 def transformType(avatar_type):
@@ -126,8 +143,8 @@ def generateAvatar(avatarList, levelList, file):
     avatarLevel = random.randint(levelList[0], levelList[1])
 
     avatarData, talentsData = getAvatarData(file)
-    print(avatarData)
-    print(talentsData)
+    # print(avatarData)
+    # print(talentsData)
 
     avatarType = transformType(avatarType)
 
@@ -136,45 +153,58 @@ def generateAvatar(avatarList, levelList, file):
     avatar.fame_base = avatarData[0][1]
     avatar.mastery_base = avatarData[0][2]
 
-    avatar_range = avatar.versality_base * avatarData[avatar.getTypeDigit() + 1][3]
+    versality_range = avatar.versality_base * \
+                      avatarData[avatar.getTypeDigit() + 1][0] * \
+                      avatarData[avatar.getTypeDigit() + 1][3]
 
-    avatar.versality_real = (avatar.versality_base * avatarData[avatar.getTypeDigit() + 1][0]) + \
-                            (avatar.versality_base * avatarData[avatar.getTypeDigit() + 1][0]) * \
-                            random.uniform((-1) * avatar_range, avatar_range)
+    fame_range = avatar.fame_base * \
+                 avatarData[avatar.getTypeDigit() + 1][1] * \
+                 avatarData[avatar.getTypeDigit() + 1][3]
 
-    avatar.fame_real = (avatar.fame_base * avatarData[avatar.getTypeDigit() + 1][1]) + \
-                       (avatar.fame_base * avatarData[avatar.getTypeDigit() + 1][1]) * \
-                       random.uniform((-1) * avatar_range, avatar_range)
+    mastery_range = avatar.mastery_base * \
+                    avatarData[avatar.getTypeDigit() + 1][2] * \
+                    avatarData[avatar.getTypeDigit() + 1][3]
 
-    avatar.mastery_real = (avatar.mastery_base * avatarData[avatar.getTypeDigit() + 1][2]) + \
-                          (avatar.mastery_base * avatarData[avatar.getTypeDigit() + 1][2]) * \
-                          random.uniform((-1) * avatar_range, avatar_range)
+    avatar.versality_real = (avatar.versality_base * avatarData[avatar.getTypeDigit() + 1][0]) * \
+                            (1 + random.uniform((-1) * versality_range, versality_range))
 
-    avatar, talents = generateTalents(avatar, talentsData)
+    avatar.fame_real = (avatar.fame_base * avatarData[avatar.getTypeDigit() + 1][1]) * \
+                       (1 + random.uniform((-1) * fame_range, fame_range))
 
-    print("Type:  ", avatar.type)
-    print("Level: ", avatar.level)
-    print("=====================")
+    avatar.mastery_real = (avatar.mastery_base * avatarData[avatar.getTypeDigit() + 1][2]) * \
+                          (1 + random.uniform((-1) * mastery_range, mastery_range))
 
-    print("VersB: ", avatar.versality_base)
-    print("VersR: ", avatar.versality_real)
-    print("Vers:  ", avatar.versality)
-    print("=====================")
+    avatar = upByLevel(avatar, avatarData)
 
-    print("FameB: ", avatar.fame_base)
-    print("FameR: ", avatar.fame_real)
-    print("Fame:  ", avatar.fame)
-    print("=====================")
+    avatar, talents = upByTalents(avatar, talentsData)
 
-    print("MastB: ", avatar.mastery_base)
-    print("MastR: ", avatar.mastery_real)
-    print("Mast:  ", avatar.mastery)
-    print("=====================")
+    avatar.talents = talents
 
-    print(talents)
+    # print("Type:  ", avatar.type)
+    # print("Level: ", avatar.level)
+    # print("=====================")
+
+    # print("VersB: ", avatar.versality_base)
+    # print("VersR: ", avatar.versality_real)
+    # print("Vers:  ", avatar.versality)
+    # print("=====================")
+
+    # print("FameB: ", avatar.fame_base)
+    # print("FameR: ", avatar.fame_real)
+    # print("Fame:  ", avatar.fame)
+    # print("=====================")
+
+    # print("MastB: ", avatar.mastery_base)
+    # print("MastR: ", avatar.mastery_real)
+    # print("Mast:  ", avatar.mastery)
+    # print("=====================")
+
+    # print(talents)
+
+    return avatar
 
 
-if __name__ == '__main__':
-    avatar_types = [1, 1, 1]
-    avatar_level = [1, 25]
-    generateAvatar(avatar_types, avatar_level, "data.xlsx")
+# if __name__ == '__main__':
+    # avatar_types = [1, 1, 1]
+    # avatar_level = [1, 25]
+    # generateAvatar(avatar_types, avatar_level, "data.xlsx")
