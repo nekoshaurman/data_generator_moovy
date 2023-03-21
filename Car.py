@@ -5,6 +5,9 @@ import numpy as np
 
 
 class TypeCar(enum.Enum):
+    """
+    enum типа авто
+    """
     typeA = 0
     typeB = 1
     typeC = 2
@@ -12,6 +15,9 @@ class TypeCar(enum.Enum):
 
 
 class RarityCar(enum.Enum):
+    """
+    enum редкости авто
+    """
     classic = 0
     rare = 1
     epic = 2
@@ -20,7 +26,13 @@ class RarityCar(enum.Enum):
 
 
 class TestCar:
-    def __init__(self, type_of_car, rarity_of_car, tank, consumption, respect, efficiency, price):
+    """
+    Класс авто
+    """
+    def __init__(self, type_of_car: TypeCar, rarity_of_car: RarityCar,
+                 tank: float, consumption: float, respect: float, efficiency: float,
+                 price: float):
+
         self.type = type_of_car
         self.rarity = rarity_of_car
         self.tank_base = tank
@@ -46,46 +58,85 @@ class TestCar:
         self.occupation = None
 
     def getTypeDigit(self):
+        """
+        Возвращает тип авто в виде enum числа
+        """
         return self.type.value
 
     def getTypeName(self):
+        """
+        Возвращает тип авто в виде enum имени
+        """
         return self.type.name
 
     def getRarityDigit(self):
+        """
+        Возвращает редкость авто в виде enum числа
+        """
         return self.rarity.value
 
     def getRarityName(self):
+        """
+        Возвращает редкость авто в виде enum имени
+        """
         return self.rarity.name
 
     def getMaxDistance(self):
+        """
+        Возвращает максимальную дистанцию (tank * 10 / consumption)
+        """
         return self.tank_base * 10 / self.consumption_base
 
     def getRealRespect(self):
-        return self.respect_base - (self.respect_base * self.R_percent / 100)
+        """
+        Возвращает respect уменьшая его на R_percent
+        """
+        return self.respect_base * (1 - self.R_percent / 100)
 
     def getRealEfficiency(self):
-        return self.efficiency_base - (self.efficiency_base * self.E_percent / 100)
+        """
+        Возвращает efficiency уменьшая его на E_percent
+        """
+        return self.efficiency_base * (1 - self.E_percent / 100)
 
     def getRespect(self):
+        """
+        Возвращает respect с учетом versality
+        """
         return self.respect_real * self.VAT
 
     def getEfficiency(self):
+        """
+        Возвращает efficiency с учетом mastery
+        """
         return self.efficiency_real * self.MAT
 
     def getBaseEarning(self):
+        """
+        Возвращает базовый заработок (MD * Respect / 100 / 2)
+        """
         return self.max_distance * self.respect / 100 / 2
 
     def getRealEarning(self):
+        """
+        Вовзвращает заработок (earning_base * efficiency)
+        """
         return self.earning_base * self.efficiency
 
     def getOccupation(self):
-        return self.price / self.earning_base
+        """
+        Возвращает окупаемость (price / earning_real)
+        """
+        return self.price / self.earning_real
 
 
-def generateCar(type_of_car, rarity_of_car,
-                UTspread, UCspread, URspread, UEspread,
-                DTspread, DCspread, DRspread, DEspread,
-                file):
+def generateCar(type_of_car: TypeCar, rarity_of_car: RarityCar,
+                UTspread: int, UCspread: int, URspread: int, UEspread: int,
+                DTspread: int, DCspread: int, DRspread: int, DEspread: int,
+                file: str):
+    """
+    Генерирует параметры машины с помощью табличных параметров и возвращает объект типа TestCar
+    """
 
     TankData, ConsumptionData, RespectData, EfficiencyData, PricesData = getData(file)
 
@@ -112,9 +163,12 @@ def generateCar(type_of_car, rarity_of_car,
     return car
 
 
-def getData(file):
+def getData(file: str):
+    """
+    Возвращает данные для генерации характеристик
+    """
     excel = pd.ExcelFile(file)
-    dataframe = excel.parse("data")
+    dataframe = excel.parse("data")  # название листа в файле .xlsx
 
     TankData = []
     ConsumptionData = []
@@ -134,10 +188,14 @@ def getData(file):
     RespectData = np.array(RespectData)
     EfficiencyData = np.array(EfficiencyData)
     PricesData = np.array(PricesData)
+
     return TankData, ConsumptionData, RespectData, EfficiencyData, PricesData
 
 
 def transformType(car_type_in):
+    """
+    Полученное число трансформирует в enum TypeCar объект и возвращает его
+    """
     if car_type_in == "Type A":
         car_type_out = TypeCar.typeA
     elif car_type_in == "Type B":
@@ -151,6 +209,9 @@ def transformType(car_type_in):
 
 
 def transformRare(rare):
+    """
+    Полученное число трансформирует в enum RarityCar объект и возвращает его
+    """
     if rare == "Classic":
         car_rarity = RarityCar.classic
     elif rare == "Rare":

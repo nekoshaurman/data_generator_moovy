@@ -6,6 +6,9 @@ from OutputClass import OutputClass
 
 
 def create_window():
+    """
+    Возвращает готовое окно и хранит layout
+    """
     layout_car = [[
         sg.Frame(title='Car', layout=[
             [
@@ -90,6 +93,7 @@ def create_window():
             ],
         ])
     ]]
+
     layout = [
         [
             sg.Column(layout_car), sg.Column(layout_avatar),
@@ -98,11 +102,16 @@ def create_window():
             layout_down,
         ],
     ]
+
     window_out = sg.Window('Car Generate', layout)
+
     return window_out
 
 
-def checkPercents(values_window):
+def checkDigits(values_window):
+    """
+    Проверка что введены числа
+    """
     if not (values_window["UTSPREAD"].isdigit() and
             values_window["UCSPREAD"].isdigit() and
             values_window["URSPREAD"].isdigit() and
@@ -113,6 +122,7 @@ def checkPercents(values_window):
             values_window["MINLEVEL"].isdigit() and
             values_window["MAXLEVEL"].isdigit()):
         return True
+
     else:
         return False
 
@@ -137,23 +147,28 @@ if __name__ == '__main__':
         if event == sg.WIN_CLOSED or event == 'Exit':
             break
 
+        # Подсказка по нажатию кнопки
         if 'HELP' in event:
             info()
 
+        # Начало генерации по кнопке
         if 'GENERATE' in event:
-            if checkPercents(values):
+            # Проверка, что введены числа
+            if checkDigits(values):
                 print("ERROR: something wrong in percents or levels!")
 
+            # Введен ли файл с данными
             elif values["SPREADDATA"] == '':
                 print("ERROR: no data of spread")
 
+            # Введено ли количество которое нужно сгенерировать
             elif not values["CARCOUNT"].isdigit():
                 print("ERROR: count error")
 
+            # Основной алгоритм
             else:
                 output_list = []
                 for i in range(int(values["CARCOUNT"])):
-
                     car_type = transformType(values["TYPE"])
                     car_rare = transformRare(values["RARE"])
                     ut_spread = int(values["UTSPREAD"])
@@ -166,12 +181,14 @@ if __name__ == '__main__':
                     de_spread = int(values["UESPREAD"])
                     data_file = values["SPREADDATA"]
 
+                    # Генерация аватара
                     avatar_types = [int(values['CHECKDRIVER']), int(values['CHECKTECH']), int(values['CHECKECOLOG'])]
                     avatar_level = [int(values['MINLEVEL']), int(values['MAXLEVEL'])]
                     Avatar = generateAvatar(avatarList=avatar_types,
                                             levelList=avatar_level,
                                             file=data_file)
 
+                    # Генерация машины
                     Car = generateCar(type_of_car=car_type, rarity_of_car=car_rare,
                                       UTspread=ut_spread, UCspread=uc_spread, URspread=ur_spread, UEspread=ue_spread,
                                       DTspread=dt_spread, DCspread=dc_spread, DRspread=dr_spread, DEspread=de_spread,
@@ -196,6 +213,7 @@ if __name__ == '__main__':
 
                     Car.occupation = Car.getOccupation()
 
+                    # Создаем класс для вывода в файл
                     Output = OutputClass(car=Car, avatar=Avatar)
                     output_list.append(Output)
 

@@ -3,6 +3,9 @@ from Avatar import TestAvatar
 
 
 class OutputClass:
+    """
+    Сборка всех параметров машины + аватара для вывода в таблицу
+    """
     def __init__(self, car: TestCar, avatar: TestAvatar):
         self.type_of_car = car.type.name
         self.rare_of_car = car.rarity.name

@@ -4,38 +4,57 @@ import enum
 
 
 class TypeAvatar(enum.Enum):
+    """
+    enum типа аватара
+    """
     driver = 0
     technician = 1
     ecologist = 2
 
 
 class TestAvatar:
-    def __init__(self, type_of_avatar, level):
+    """
+    Класс аватара водителя машины
+    """
+    def __init__(self, type_of_avatar: TypeAvatar, level: int):
         self.type = type_of_avatar  # Driver, Technician, Ecologist
         self.level = level  # 1 - 25
 
+        # Базовые хар-ки
         self.versality_base = None
         self.fame_base = None
         self.mastery_base = None
 
+        # Хар-ки с бустом по уровню
         self.versality_real = None
         self.fame_real = None
         self.mastery_real = None
 
+        # Окончательные хар-ки с бустом по уровню и талантам
         self.versality = None
         self.fame = None
         self.mastery = None
 
+        # Список прокаченных талантов
         self.talents = None
 
     def getTypeDigit(self):
+        """
+        Возвращает тип автара в виде enum числа
+        """
         return self.type.value
 
     def getTypeName(self):
+        """
+        Возвращает тип автара в виде enum имени
+        """
         return self.type.name
 
 
-def getAvatarData(file):
+def getAvatarData(file: str):
+    """
+    Достает из файла данных нужные данные для аватара (данные всегда в строках 28-36 в xlsx)
+    """
     excel = pd.ExcelFile(file)
     dataframe = excel.parse("data")
     Data = []
@@ -62,7 +81,10 @@ def getAvatarData(file):
     return Data, Talents
 
 
-def upByLevel(avatar: TestAvatar, avatarData):
+def upByLevel(avatar: TestAvatar, avatarData: list):
+    """
+    Апает персонажу характеристики по его уровню
+    """
     ups = avatar.level
     for up in range(ups):
         avatar.versality_real = avatar.versality_real * avatarData[0][3]
@@ -71,7 +93,11 @@ def upByLevel(avatar: TestAvatar, avatarData):
     return avatar
 
 
-def upByTalents(avatar: TestAvatar, talentsData):
+def upByTalents(avatar: TestAvatar, talentsData: list):
+    """
+    Случайно тратит доступные очки прокачки (каждые 5 уровней дают одно очко)
+    и апает характеристики если это делают таланты
+    """
     save_talents = []
     talents = {
         'Versality': 0,
@@ -124,7 +150,10 @@ def upByTalents(avatar: TestAvatar, talentsData):
     return avatar, save_talents
 
 
-def transformType(avatar_type):
+def transformType(avatar_type: int):
+    """
+    Полученное число трансформирует в enum объект и возвращает его
+    """
     if avatar_type == 0:
         return TypeAvatar.driver
     elif avatar_type == 1:
@@ -133,7 +162,10 @@ def transformType(avatar_type):
         return TypeAvatar.ecologist
 
 
-def generateAvatar(avatarList, levelList, file):
+def generateAvatar(avatarList: list, levelList: list, file: str):
+    """
+    Генерирует аватара
+    """
     randomList = []
     for i in range(3):
         if avatarList[i] == 1:
