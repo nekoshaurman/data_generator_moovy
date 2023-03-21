@@ -1,5 +1,8 @@
-import PySimpleGUI as sg
-import pandas as pd
+# import PySimpleGUI as sg
+# import pandas as pd
+from PySimpleGUI import Frame, Window, WIN_CLOSED, \
+                        Text, InputText, Checkbox, Combo, FileBrowse, Button, Multiline, Column
+from pandas import DataFrame
 from Car import generateCar, transformRare, transformType
 from Avatar import generateAvatar
 from OutputClass import OutputClass
@@ -10,100 +13,100 @@ def create_window():
     Возвращает готовое окно и хранит layout
     """
     layout_car = [[
-        sg.Frame(title='Car', layout=[
+        Frame(title='Car', layout=[
             [
-                sg.Text("Percents Up", size=(11, 1)),
-                sg.Text("T:"), sg.InputText(key='UTSPREAD', size=(4, 1)),
-                sg.Text("C:"), sg.InputText(key='UCSPREAD', size=(4, 1)),
-                sg.Text("R:"), sg.InputText(key='URSPREAD', size=(4, 1)),
-                sg.Text("E:"), sg.InputText(key='UESPREAD', size=(4, 1)),
+                Text("Percents Up", size=(11, 1)),
+                Text("T:"), InputText(key='UTSPREAD', size=(4, 1)),
+                Text("C:"), InputText(key='UCSPREAD', size=(4, 1)),
+                Text("R:"), InputText(key='URSPREAD', size=(4, 1)),
+                Text("E:"), InputText(key='UESPREAD', size=(4, 1)),
             ],
             [
-                sg.Text("Percents Down", size=(11, 1)),
-                sg.Text("T:"), sg.InputText(key='DTSPREAD', size=(4, 1)),
-                sg.Text("C:"), sg.InputText(key='DCSPREAD', size=(4, 1)),
-                sg.Text("R:"), sg.InputText(key='DRSPREAD', size=(4, 1)),
-                sg.Text("E:"), sg.InputText(key='DESPREAD', size=(4, 1)),
+                Text("Percents Down", size=(11, 1)),
+                Text("T:"), InputText(key='DTSPREAD', size=(4, 1)),
+                Text("C:"), InputText(key='DCSPREAD', size=(4, 1)),
+                Text("R:"), InputText(key='DRSPREAD', size=(4, 1)),
+                Text("E:"), InputText(key='DESPREAD', size=(4, 1)),
             ],
             [
-                sg.Text("Real Respect Percent:", size=(18, 1)), sg.InputText(key='R_PERCENT',
-                                                                             size=(4, 1), default_text="25"),
+                Text("Real Respect Percent:", size=(18, 1)), InputText(key='R_PERCENT',
+                                                                       size=(4, 1), default_text="25"),
             ],
             [
-                sg.Text("Real Efficiency Percent:", size=(18, 1)), sg.InputText(key='E_PERCENT',
-                                                                                size=(4, 1), default_text="25"),
+                Text("Real Efficiency Percent:", size=(18, 1)), InputText(key='E_PERCENT',
+                                                                          size=(4, 1), default_text="25"),
             ],
         ])
     ]]
 
     layout_avatar = [[
-        sg.Frame(title='Avatar', layout=[
+        Frame(title='Avatar', layout=[
             [
-                # sg.Text("Driver:", size=(4, 1)),
-                sg.Checkbox(text='Driver', key='CHECKDRIVER'),
+                # Text("Driver:", size=(4, 1)),
+                Checkbox(text='Driver', key='CHECKDRIVER'),
             ],
             [
-                # sg.Text("Technician:", size=(4, 1)),
-                sg.Checkbox(text='Technician', key='CHECKTECH'),
+                # Text("Technician:", size=(4, 1)),
+                Checkbox(text='Technician', key='CHECKTECH'),
             ],
             [
-                # sg.Text("Ecologist:", size=(4, 1)),
-                sg.Checkbox(text='Ecologist', key='CHECKECOLOG'),
+                # Text("Ecologist:", size=(4, 1)),
+                Checkbox(text='Ecologist', key='CHECKECOLOG'),
             ],
             [
-                sg.Text("Min Level:", size=(7, 1)), sg.InputText(key='MINLEVEL', size=(4, 1), default_text='1'),
-                sg.Text("Max Level:", size=(7, 1)), sg.InputText(key='MAXLEVEL', size=(4, 1), default_text='25'),
+                Text("Min Level:", size=(7, 1)), InputText(key='MINLEVEL', size=(4, 1), default_text='1'),
+                Text("Max Level:", size=(7, 1)), InputText(key='MAXLEVEL', size=(4, 1), default_text='25'),
             ],
         ])
     ]]
 
     layout_down = [[
-        sg.Frame(title='', layout=[
+        Frame(title='', layout=[
             [
-                sg.Text("Type:", size=(5, 1)),
-                sg.Combo(["Type A", "Type B", "Type C", "Type D"],
-                         key='TYPE', size=(10, 1), default_value="Type A"),
-                sg.Text("Base Data:", size=(8, 1)), sg.InputText(key='SPREADDATA', size=(30, 1)),
-                sg.FileBrowse(target='SPREADDATA', file_types=(('Excel Files', '*.xlsx'),)),
+                Text("Type:", size=(5, 1)),
+                Combo(["Type A", "Type B", "Type C", "Type D"],
+                      key='TYPE', size=(10, 1), default_value="Type A"),
+                Text("Base Data:", size=(8, 1)), InputText(key='SPREADDATA', size=(30, 1)),
+                FileBrowse(target='SPREADDATA', file_types=(('Excel Files', '*.xlsx'),)),
             ],
             [
-                sg.Text("Rare:", size=(5, 1)),
-                sg.Combo(["Classic", "Rare", "Epic", "Legendary", "Insane"],
-                         key='RARE', size=(10, 1), default_value="Classic"),
-                sg.Text("Output file:", size=(8, 1)),
-                sg.InputText(key='OUTPUTDATA', size=(30, 1), default_text='output'),
+                Text("Rare:", size=(5, 1)),
+                Combo(["Classic", "Rare", "Epic", "Legendary", "Insane"],
+                      key='RARE', size=(10, 1), default_value="Classic"),
+                Text("Output file:", size=(8, 1)),
+                InputText(key='OUTPUTDATA', size=(30, 1), default_text='output'),
             ],
             [
-                sg.Text("Count:", size=(5, 1)), sg.InputText(key='CARCOUNT', size=(12, 1)),
+                Text("Count:", size=(5, 1)), InputText(key='CARCOUNT', size=(12, 1)),
             ],
             [
-                sg.Button("Generate", key='GENERATE'),
-                sg.Button("Help", key='HELP'),
+                Button("Generate", key='GENERATE'),
+                Button("Help", key='HELP'),
             ],
             [
-                sg.Multiline(autoscroll=True, auto_refresh=True,
-                             reroute_stdout=True, size=(90, 25),
-                             font="Courier",
-                             default_text="Info:\n"
-                                          "1. DO NOT START GENERATION WHEN YOUR OUTPUT FILE IS OPEN\n"
-                                          "2. INPUT AND OUTPUT FILES MUST BE .XLSX FORMAT\n"
-                                          "3. T - TANK, C - CONSUMPTION, R - RESPECT, E - EFFICIENCY\n"
-                                          "4. Percents Up shows how much higher the value can be\n"
-                                          "5. Percents Down shows how much lower the value can be\n"),
+                Multiline(autoscroll=True, auto_refresh=True,
+                          reroute_stdout=True, size=(90, 25),
+                          font="Courier",
+                          default_text="Info:\n"
+                                       "1. DO NOT START GENERATION WHEN YOUR OUTPUT FILE IS OPEN\n"
+                                       "2. INPUT AND OUTPUT FILES MUST BE .XLSX FORMAT\n"
+                                       "3. T - TANK, C - CONSUMPTION, R - RESPECT, E - EFFICIENCY\n"
+                                       "4. Percents Up shows how much higher the value can be\n"
+                                       "5. Percents Down shows how much lower the value can be\n"),
             ],
         ])
     ]]
 
     layout = [
         [
-            sg.Column(layout_car), sg.Column(layout_avatar),
+            Column(layout_car), Column(layout_avatar),
         ],
         [
             layout_down,
         ],
     ]
 
-    window_out = sg.Window('Car Generate', layout)
+    window_out = Window('Car Generate', layout)
 
     return window_out
 
@@ -144,7 +147,7 @@ if __name__ == '__main__':
 
     while True:
         event, values = window.read()
-        if event == sg.WIN_CLOSED or event == 'Exit':
+        if event == WIN_CLOSED or event == 'Exit':
             break
 
         # Подсказка по нажатию кнопки
@@ -224,7 +227,7 @@ if __name__ == '__main__':
                     print(i + 1, ". Talents:    ", Avatar.talents)
                     print("======================================")
 
-                out_data = pd.DataFrame([vars(output) for output in output_list])
+                out_data = DataFrame([vars(output) for output in output_list])
 
                 try:
                     out_data.to_excel(values['OUTPUTDATA']+'.xlsx', index=False, header=True)
