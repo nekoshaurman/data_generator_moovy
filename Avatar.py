@@ -1,5 +1,5 @@
 import pandas as pd
-import random
+from random import choice, randint, uniform
 import enum
 
 
@@ -118,7 +118,7 @@ def upByTalents(avatar: TestAvatar, talentsData: list):
     avatar.fame = avatar.fame_real
 
     while upgrade_points > 0:
-        branch = random.choice(list(talents.keys()))
+        branch = choice(list(talents.keys()))
         if talents[branch] < max_level:
             talents[branch] += 1
             upgrade_points -= 1
@@ -171,8 +171,8 @@ def generateAvatar(avatarList: list, levelList: list, file: str):
         if avatarList[i] == 1:
             randomList.append(i)
 
-    avatarType = random.choice(randomList)
-    avatarLevel = random.randint(levelList[0], levelList[1])
+    avatarType = choice(randomList)
+    avatarLevel = randint(levelList[0], levelList[1])
 
     avatarData, talentsData = getAvatarData(file)
     # print(avatarData)
@@ -198,13 +198,13 @@ def generateAvatar(avatarList: list, levelList: list, file: str):
                     avatarData[avatar.getTypeDigit() + 1][3]
 
     avatar.versality_real = (avatar.versality_base * avatarData[avatar.getTypeDigit() + 1][0]) * \
-                            (1 + random.uniform((-1) * versality_range, versality_range))
+                            (1 + uniform((-1) * versality_range, versality_range))
 
     avatar.fame_real = (avatar.fame_base * avatarData[avatar.getTypeDigit() + 1][1]) * \
-                       (1 + random.uniform((-1) * fame_range, fame_range))
+                       (1 + uniform((-1) * fame_range, fame_range))
 
     avatar.mastery_real = (avatar.mastery_base * avatarData[avatar.getTypeDigit() + 1][2]) * \
-                          (1 + random.uniform((-1) * mastery_range, mastery_range))
+                          (1 + uniform((-1) * mastery_range, mastery_range))
 
     avatar = upByLevel(avatar, avatarData)
 

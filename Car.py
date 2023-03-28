@@ -1,5 +1,5 @@
 import enum
-import random
+from random import choice, uniform
 import pandas as pd
 import numpy as np
 
@@ -130,7 +130,7 @@ class TestCar:
         return self.price / self.earning_real
 
 
-def generateCar(type_of_car: TypeCar, rarity_of_car: RarityCar,
+def generateCar(types_of_car: list, rarities_of_car: list,
                 UTspread: int, UCspread: int, URspread: int, UEspread: int,
                 DTspread: int, DCspread: int, DRspread: int, DEspread: int,
                 file: str):
@@ -138,21 +138,38 @@ def generateCar(type_of_car: TypeCar, rarity_of_car: RarityCar,
     Генерирует параметры машины с помощью табличных параметров и возвращает объект типа TestCar
     """
 
+    randomType = []
+    randomRare = []
+
+    for temp in range(4):
+        if types_of_car[temp] == 1:
+            randomType.append(temp)
+
+    for temp in range(5):
+        if rarities_of_car[temp] == 1:
+            randomRare.append(temp)
+
+    type_of_car = choice(randomType)
+    type_of_car = transformType(type_of_car)
+
+    rarity_of_car = choice(randomRare)
+    rarity_of_car = transformRare(rarity_of_car)
+
     TankData, ConsumptionData, RespectData, EfficiencyData, PricesData = getData(file)
 
-    Tank = round(random.uniform(
+    Tank = round(uniform(
         (TankData[type_of_car.value][rarity_of_car.value] * (1 - DTspread / 100)),
         (TankData[type_of_car.value][rarity_of_car.value] * (1 + UTspread / 100))), 2)
 
-    Consumption = round(random.uniform(
+    Consumption = round(uniform(
         (ConsumptionData[type_of_car.value][rarity_of_car.value] * (1 - DCspread / 100)),
         (ConsumptionData[type_of_car.value][rarity_of_car.value] * (1 + UCspread / 100))), 2)
 
-    Respect = round(random.uniform(
+    Respect = round(uniform(
         (RespectData[type_of_car.value][rarity_of_car.value] * (1 - DRspread / 100)),
         (RespectData[type_of_car.value][rarity_of_car.value] * (1 + URspread / 100))), 2)
 
-    Efficiency = round(random.uniform(
+    Efficiency = round(uniform(
         (EfficiencyData[type_of_car.value][rarity_of_car.value] * (1 - DEspread / 100)),
         (EfficiencyData[type_of_car.value][rarity_of_car.value] * (1 + UEspread / 100))), 4)
 
@@ -192,15 +209,15 @@ def getData(file: str):
     return TankData, ConsumptionData, RespectData, EfficiencyData, PricesData
 
 
-def transformType(car_type_in):
+def transformType(car_type_in: int):
     """
     Полученное число трансформирует в enum TypeCar объект и возвращает его
     """
-    if car_type_in == "Type A":
+    if car_type_in == 0:
         car_type_out = TypeCar.typeA
-    elif car_type_in == "Type B":
+    elif car_type_in == 1:
         car_type_out = TypeCar.typeB
-    elif car_type_in == "Type C":
+    elif car_type_in == 2:
         car_type_out = TypeCar.typeC
     else:
         car_type_out = TypeCar.typeD
@@ -208,17 +225,17 @@ def transformType(car_type_in):
     return car_type_out
 
 
-def transformRare(rare):
+def transformRare(rare: int):
     """
     Полученное число трансформирует в enum RarityCar объект и возвращает его
     """
-    if rare == "Classic":
+    if rare == 0:
         car_rarity = RarityCar.classic
-    elif rare == "Rare":
+    elif rare == 1:
         car_rarity = RarityCar.rare
-    elif rare == "Epic":
+    elif rare == 2:
         car_rarity = RarityCar.epic
-    elif rare == "Legendary":
+    elif rare == 3:
         car_rarity = RarityCar.legendary
     else:
         car_rarity = RarityCar.insane
